@@ -1,83 +1,82 @@
-# Variables for scoring and balls
 score = 0
 balls = 5
-# Display variables on the screen
+
 board_score = codesters.Display(score, -200, 200)
 board_balls = codesters.Display(balls, -200, -200)
 
-# Adding a basketball net
+
 sprite = codesters.Sprite("Bascket_Net_Small_59a")
 sprite.set_position(250, 75)
-# Adding a big basketball
+
 ball = codesters.Sprite("Backet_Ball_ad8")
 ball.set_size(0.7)
 ball.set_position(0, -250)
-# Adding a small basketball offstage
+
 ball2 = codesters.Sprite("Backet_Ball_ad8")
 ball2.set_size(0.4)
 ball2.set_position(0, 300)
 
-# Moving the basketball net left and right
+
 def basketball_move():
     stage.wait(0.5)
     sprite.translate_x(-500)
     stage.wait(0.5)
     sprite.translate_x(500)
 
-# Moving the ball to the left
+
 def ball_move_left():
     ball.move_left(50)
 
-# Moving the ball to the right
+
 def ball_move_right():
     ball.move_right(50)
 
 stage.event_key("right", ball_move_right)
 stage.event_key("left", ball_move_left)
 
-# Throwing the ball
+
 def throw_ball():
     global balls
-    # Disable the "up" key to prevent issues
+    
     sprite.event_key_release("up", None)
-    # Deduct one ball
+    
     balls -= 1
-    # Update the ball count
+    
     board_balls.update(balls)
-    # End the game if there are no more balls
+    
     if balls == 0:
         text = codesters.Text("Game Over", 0, 0, "red")
         text.set_size(4)
         stage.remove_all_events()
-    # Ball's flight
+    
     ball.set_speed(10)
     ball.translate_y(600)
     ball.hide()
     ball2.go_to(ball.get_x(), ball.get_y())
-    # Move our hidden ball back to its original position
+    
     ball.go_to(0, -250)
-    # Small ball's descent
+    
     ball2.set_speed(15)
     ball2.translate_y(-700)
-    # Move our hidden small ball back to its original position
+   
     ball2.go_to(0, 600)
     stage.wait(2)
-    # Show the big ball again
+    
     ball.show()
-    # Re-enable the ability to throw the ball
+  
     sprite.event_key_release("up", throw_ball)
 
 sprite.event_key_release("up", throw_ball)
 
-# Collision with the basketball net
+
 def collision(sprite,hit_sprite):
     global score, balls
-    # Determine the positions of our sprites
+  
     x_hit = hit_sprite.get_x()
     y_hit = hit_sprite.get_y()
     x_sprite = sprite.get_x()
     name = hit_sprite.get_image_name()
-    # Direct hit
+ 
     if name == "Bascket_Net_Small_59a" and x_hit == x_sprite:
         score += 2
         board_score.update(score)
@@ -92,7 +91,7 @@ def collision(sprite,hit_sprite):
         ball.hide()
         ball.go_to(0, -250)
         ball.show()
-    # Diagonal hit
+   
     elif name == "Bascket_Net_Small_59a" and (x_hit - 10 > x_sprite or x_hit + 10 < x_sprite):
         score += 1
         board_score.update(score)
@@ -110,7 +109,6 @@ def collision(sprite,hit_sprite):
 
 ball2.event_collision(collision)
 
-# Moving the basketball net
 while True:
     basketball_move()
 
